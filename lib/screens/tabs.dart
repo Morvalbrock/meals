@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:meals/data/dummy_data.dart';
 import 'package:meals/models/meal.dart';
 import 'package:meals/screens/categories.dart';
+import 'package:meals/screens/filterscreen.dart';
 import 'package:meals/screens/maindrawer.dart';
 import 'package:meals/screens/meals.dart';
+
+const kInitialFilter = {
+  Filter.glutenFree: false,
+  Filter.lactoseFree: false,
+  Filter.vegan: false,
+  Filter.vegetarion: false,
+};
 
 class TabScreen extends StatefulWidget {
   const TabScreen({super.key});
@@ -15,6 +24,8 @@ class _TabScreenState extends State<TabScreen> {
   int _selectedPageIndex = 0;
 
   final List<Meal> _favoriteMeals = [];
+
+  Map<Filter, bool> _selectedFilter = kInitialFilter;
 
   void _showInfoMassage(String message) {
     ScaffoldMessenger.of(context).clearSnackBars();
@@ -46,10 +57,50 @@ class _TabScreenState extends State<TabScreen> {
     });
   }
 
+  void _setScreen(String identifier) async {
+    Navigator.of(context).pop();
+    if (identifier == 'filters') {
+      // Navigator.of(context).pop();
+      final result = await Navigator.of(context).push<Map<Filter, bool>>(
+        MaterialPageRoute(
+          builder: (context) => FilterScreen(
+            currentFilters: _selectedFilter,
+          ),
+        ),
+      );
+      setState(() {
+        _selectedFilter = result ?? kInitialFilter;
+      });
+    }
+    //  else if (identifier == 'meals') {
+    //   Navigator.of(context).push(
+    //     MaterialPageRoute(
+    //       builder: (context) => const TabScreen(),
+    //     ),
+    //   );
+    // }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final availableMeals = dummyMeals.where((meal) {
+      if (_selectedFilter[Filter.glutenFree]! && !meal.isGlutenFree) {
+        return false;
+      }
+      if (_selectedFilter[Filter.lactoseFree]! && !meal.isLactoseFree) {
+        return false;
+      }
+      if (_selectedFilter[Filter.vegetarion]! && !meal.isVegetarian) {
+        return false;
+      }
+      if (_selectedFilter[Filter.vegan]! && !meal.isVegan) {
+        return false;
+      }
+      return true;
+    }).toList();
     Widget activePage = CategoriesScreen(
       onToggleFavorite: _toggleMealFavoriteStatus,
+      availableMeals: availableMeals,
     );
     var activePageTitle = 'Categories';
 
@@ -64,7 +115,7 @@ class _TabScreenState extends State<TabScreen> {
       appBar: AppBar(
         title: Text(activePageTitle),
       ),
-      drawer: const MainDrawer(),
+      drawer: MainDrawer(filterScreenopen: _setScreen),
       body: activePage,
       bottomNavigationBar: BottomNavigationBar(
         items: const [

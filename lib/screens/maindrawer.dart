@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class MainDrawer extends StatelessWidget {
-  const MainDrawer({super.key});
-
+  const MainDrawer({super.key, required this.filterScreenopen});
+  final void Function(String identifier) filterScreenopen;
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -55,7 +55,9 @@ class MainDrawer extends StatelessWidget {
                     fontSize: 24,
                   ),
             ),
-            onTap: () {},
+            onTap: () {
+              filterScreenopen('meals');
+            },
           ),
           ListTile(
             leading: Icon(
@@ -70,7 +72,9 @@ class MainDrawer extends StatelessWidget {
                     fontSize: 24,
                   ),
             ),
-            onTap: () {},
+            onTap: () {
+              filterScreenopen('filters');
+            },
           ),
         ],
       ),
