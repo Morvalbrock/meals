@@ -56,33 +56,35 @@ class _CategoriesScreenState extends State<CategoriesScreen>
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: _animationController,
-      child: GridView(
-        padding: const EdgeInsets.all(24.0),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 3 / 2,
-          crossAxisSpacing: 20,
-          mainAxisSpacing: 20,
+        animation: _animationController,
+        child: GridView(
+          padding: const EdgeInsets.all(24.0),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: 3 / 2,
+            crossAxisSpacing: 20,
+            mainAxisSpacing: 20,
+          ),
+          children: [
+            //anotherway
+            //availableCetegories.map((category)=> CategoryGridItem(category: category),),
+            for (final category in availableCategories)
+              CategoryGridItem(
+                category: category,
+                onSelectCatagory: () {
+                  _selectCategory(context, category);
+                },
+              ),
+          ],
         ),
-        children: [
-          //anotherway
-          //availableCetegories.map((category)=> CategoryGridItem(category: category),),
-          for (final category in availableCategories)
-            CategoryGridItem(
-              category: category,
-              onSelectCatagory: () {
-                _selectCategory(context, category);
-              },
-            ),
-        ],
-      ),
-      builder: (contax, child) => Padding(
-        padding: EdgeInsets.only(
-          top: 100 - _animationController.value * 100,
-        ),
-        child: child,
-      ),
-    );
+        builder: (contax, child) => SlideTransition(
+              position: _animationController.drive(
+                Tween(
+                  begin: const Offset(0, 0.3),
+                  end: const Offset(0, 0),
+                ),
+              ),
+              child: child,
+            ));
   }
 }
