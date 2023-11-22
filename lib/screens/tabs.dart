@@ -98,6 +98,7 @@ class _TabScreenState extends ConsumerState<TabScreen> {
       }
       return true;
     }).toList();
+
     Widget activePage = CategoriesScreen(
       availableMeals: availableMeals,
     );
