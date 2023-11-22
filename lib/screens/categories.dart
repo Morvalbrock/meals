@@ -78,11 +78,12 @@ class _CategoriesScreenState extends State<CategoriesScreen>
           ],
         ),
         builder: (contax, child) => SlideTransition(
-              position: _animationController.drive(
-                Tween(
-                  begin: const Offset(0, 0.3),
-                  end: const Offset(0, 0),
-                ),
+              position: Tween(
+                begin: const Offset(0, 0.3),
+                end: const Offset(0, 0),
+              ).animate(
+                CurvedAnimation(
+                    parent: _animationController, curve: Curves.easeInOut),
               ),
               child: child,
             ));
